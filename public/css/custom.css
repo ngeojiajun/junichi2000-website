@@ -1,0 +1,30 @@
+.post-text > div{
+  margin-top: 15px;
+}
+.highlight{
+  color:var(--blue);
+  background:var(--yellow);
+}
+a.disabled{
+  pointer-events: none;
+  cursor: default;
+  color:grey;
+}
+body{
+  height:fit-content;
+  min-height: 100vh;
+  position:relative;
+}
+body > div.page{
+  padding-bottom: 50px;
+}
+footer{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:50px;
+}
+.bg-secondary a{
+  color:var(--blue);
+  background:var(--yellow);
+}

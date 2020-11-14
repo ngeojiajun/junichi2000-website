@@ -1,0 +1,21 @@
+module.exports={
+  blogTitle:"藤原順一のブログ",
+  blogDesc:"彼の過ごした日々をこちらに綴る",
+  home:"ホーム",
+  posts:"記事",
+  pictures:"画像",
+  page_not_found:"指定されたページが見つかりません",
+  page_not_found_txt:"指定されたページが見つかりませんでした、URLを確認したうえもう一度お試しください。",
+  server_error:"サーバーエラー",
+  server_error_txt:"リクエストを処理しょうとしているとき、エラーが発生しました。",
+  about_author:"作者について",
+  author_name:"藤原順一",
+  author_pp:"/public/imgs/IMG_20200731_110715.jpg",
+  author_desc:"2000にマレーシアで生まれ男で現在デジタルマルチメディアを勉強しています",
+  last_update:"最終更新：",
+  read_more:"もっと読む",
+  tags:"タグ：",
+  prev_post:"前の記事へ>>",
+  next_post:"<<次の記事",
+  copyright:"2020 藤原順一"
+};

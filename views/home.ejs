@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <% if(page.type==="post"){ %>
+  <title><%= post.title %>- <%= strings.blogTitle %></title>
+  <% }else if(page.type==="error"){ %>
+  <title><%= env.error %></title>
+  <% }else if(page.type==="posts"){ %>
+  <title><%= env.tag||strings.posts %>-<%= strings.blogTitle %></title>
+  <% }else{ %>
+  <title><%= strings.blogTitle %></title>
+  <% } %>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/css/custom.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <div class="jumbotron jumbotron-fluid bg-primary text-white" style="margin:0;padding-top:15px">
+    <div class="container">
+      <h1><a href="/" style="text-decoration:none;color:white"><%= strings.blogTitle %></a></h1>
+      <% if(strings.blogDesc){ %>
+      <p><%= strings.blogDesc %></p>
+      <% } %>
+      </div>
+    </div>
+
+  <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link <%= page.type==="home"||page.context==="home"? "active" : "" %>" href="/"><%= strings.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= page.type==="posts"&&page.meta===false? "active" : "" %>" href="/posts"><%= strings.posts %></a>
+        </li>
+        <% for(let i=0;i<page.pinned.length;i++){ %>
+        <li class="nav-item">
+          <a class="nav-link <%= page.inPage(page.pinned[i],env.name,env.base||"")? "active" : "" %>" href="<%= page.generateUrl(page.pinned[i]) %>"><%= page.getTitle(page.pinned[i]) %></a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </nav>
+
+  <% if(page.type==="error"){ %>
+  <div class="container-md text-center page" style="margin:0">
+    <%= env.error_desc %>
+  </div>
+  <% }else if(page.type==="post"||page.type==="post-inline"){ %>
+<div class="container page" style="">
+  <div class="row">
+    <div class="col-sm-1 d-none-sm">
+    </div>
+    <div class="col-sm-7 p-3 post-text">
+      <h1><%= post.title %></h1>
+      <% if(post.properties["hide-timestamp"]!=="true"&&page.type!=="post-inline"){ %>
+      <h6><%= strings.last_update %><%= new Date(post.timestamp*1000).toLocaleString("ja-JP",{timezone:"Tokyo"}) %></h6>
+      <% } %>
+      <% for(let i=0;i<post.pageTags.length;i++){ %>
+      <% if(post.pageTags[i].type==="paragraph"){%>
+      <div class="<%= post.pageTags[i].style["class"]||"" %>" style="<%= page.expandTag(post.pageTags[i].style) %>">
+        <% if(post.pageTags[i].useRaw){%>
+        <%- post.pageTags[i].text %>
+        <%}else{ %>
+        <%= post.pageTags[i].text %>
+        <% } %>
+      </div>
+      <% }else if(post.pageTags[i].type==="image"){%>
+      <div>
+      <img alt=<%= post.pageTags[i].alt %> src="<%= post.pageTags[i].url %>"
+        class="rounded img-fluid <%= post.pageTags[i].style["class"]||"" %>" style="<%= page.expandTag(post.pageTags[i].style) %>"/><br/>
+        <%= post.pageTags[i].caption?post.pageTags[i].alt:"" %>
+      </div>
+      <% } %>
+      <% } %>
+      <%if(post.properties["hide-tags"]!=="true"){%>
+        <div>
+          <%= strings.tags%>
+          <% for(let j=0;j<post.tag.length;j++){ %>
+          <span class="badge badge-secondary"><a href="<%= page.getTagLink(post.tag[j])%>" class="text-white"><%=post.tag[j]%></a></span>
+          <% } %>
+        </div>
+      <% } %>
+      <%if(env.showPrevNext){%>
+      <div>
+        <a href="<%- env.next?page.generateUrl(env.next)+"\" class=\"":"javascript:;void(0)\" class=\"disabled"%> float-md-left"><%=strings.next_post%></a>
+        <a href="<%- env.prev?page.generateUrl(env.prev)+"\" class=\"":"javascript:;void(0)\" class=\"disabled"%> float-md-right"><%=strings.prev_post%></a>
+      </div>
+      <%}%>
+    </div>
+    <div class="col-sm-4 p-3">
+      <% if(page.type!=="post-inline"){ %>
+      <h3><%= strings.about_author %></h3>
+      <img src="<%= strings.author_pp %>" class="rounded img-fluid" style="max-height:250px;" alt="<%= strings.author_name %>">
+      <h3><%= strings.author_name %></h3>
+      <%= strings.author_desc %>
+      <% }%>
+    </div>
+  </div>
+</div>
+  <%}else if(page.type==="posts"){%>
+  <div class="container page" style="">
+  <% for(let i=0;i<post.length;i++){ %>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">  <a href="<%=post[i]._link%>" class="card-link"><%= post[i].title %></a></h4>
+        <% if(post[i].properties["hide-timestamp"]!=="true"){ %>
+        <h6><%= strings.last_update %><%= new Date(post[i].timestamp*1000).toLocaleString("ja-JP",{timezone:"Tokyo"}) %></h6>
+        <% } %>
+        <%if(post[i].properties["hide-tags"]!=="true"){%>
+        <div>
+          <%= strings.tags%>
+          <% for(let j=0;j<post[i].tag.length;j++){ %>
+          <span class="badge badge-secondary"><a href="<%= page.getTagLink(post[i].tag[j])%>" class="text-white"><%=post[i].tag[j]%></a></span>
+          <% } %>
+        </div>
+        <% } %>
+        <a href="<%=post[i]._link%>" class="card-link"><%=strings.read_more%></a>
+      </div>
+    </div>
+  <%}%>
+  <% if(env.use_pages){ let before=false,after=false;/**ページ数が多すぎたら隠す*/ %>
+  <ul class="pagination justify-content-center">
+    <li class="page-item <%= env.idx<=0?"disabled":""%>"><a class="page-link" href="<%= env.idx<=0?"#":`${env.url_base}${env.idx}`%>">&lt;&lt;</a></li>
+    <% for(let i=0;i<env.pages;i++){ %>
+    <% if(env.pages<=7||(i<=1||i===env.idx||i===env.idx-1||i===env.idx+1||i>=env.pages-2)){%>
+    <li class="page-item <%= env.idx===i?"active disabled":""%>"><a class="page-link" href="<%= env.idx===i?"#":`${env.url_base}${i+1}`%>"><%=i+1%></a></li>
+    <%}else if((i<env.idx&&!before)||(i>env.idx&&!after)){%>
+    <li class="page-item disabled><a class="page-link" href="#"">...</a></li>
+    <%if(i<env.idx)before=true;else after=true;}%>
+    <%}%>
+    <li class="page-item <%= env.idx>=env.pages-1?"disabled":""%>"><a class="page-link" href="<%= env.idx>=env.pages-1?"#":`${env.url_base}${env.idx+2}`%>">&gt;&gt;</a></li>
+  </ul>
+  </div>
+</div>
+  <%}%>
+  </div>
+  <%}%>
+<footer class="jumbotron jumbotron-fluid bg-primary text-white" style="margin:0;padding-top:0px">
+  <div class="container text-center align-self-center">
+      &copy;<%=strings.copyright%>
+  </div>
+</footer>
+</body>
+</html>
